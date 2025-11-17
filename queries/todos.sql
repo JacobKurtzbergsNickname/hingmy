@@ -13,8 +13,8 @@ SELECT * FROM todos WHERE completed = FALSE AND deleted_at IS NULL ORDER BY crea
 SELECT * FROM todos WHERE completed = TRUE AND deleted_at IS NULL ORDER BY updated_at DESC;
 
 -- name: CreateTodo :one
-INSERT INTO todos (title, description, due_date) 
-VALUES (?, ?, ?) 
+INSERT INTO todos (title, description, due_date, completed, created_at, updated_at, deleted_at) 
+VALUES (?, ?, ?, ?, ?, ?, ?) 
 RETURNING *;
 
 -- name: UpdateTodo :exec

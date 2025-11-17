@@ -22,8 +22,8 @@ func (q *Queries) CompleteTodo(ctx context.Context, id int64) error {
 }
 
 const createTodo = `-- name: CreateTodo :one
-INSERT INTO todos (title, description, due_date) 
-VALUES (?, ?, ?) 
+INSERT INTO todos (title, description, due_date, completed, created_at, updated_at, deleted_at) 
+VALUES (?, ?, ?, ?, ?, ?, ?) 
 RETURNING id, title, description, completed, created_at, updated_at, deleted_at, due_date
 `
 
@@ -31,10 +31,22 @@ type CreateTodoParams struct {
 	Title       string         `db:"title" json:"title"`
 	Description sql.NullString `db:"description" json:"description"`
 	DueDate     sql.NullTime   `db:"due_date" json:"due_date"`
+	Completed   sql.NullBool   `db:"completed" json:"completed"`
+	CreatedAt   sql.NullTime   `db:"created_at" json:"created_at"`
+	UpdatedAt   sql.NullTime   `db:"updated_at" json:"updated_at"`
+	DeletedAt   sql.NullTime   `db:"deleted_at" json:"deleted_at"`
 }
 
 func (q *Queries) CreateTodo(ctx context.Context, arg CreateTodoParams) (Todo, error) {
-	row := q.db.QueryRowContext(ctx, createTodo, arg.Title, arg.Description, arg.DueDate)
+	row := q.db.QueryRowContext(ctx, createTodo,
+		arg.Title,
+		arg.Description,
+		arg.DueDate,
+		arg.Completed,
+		arg.CreatedAt,
+		arg.UpdatedAt,
+		arg.DeletedAt,
+	)
 	var i Todo
 	err := row.Scan(
 		&i.ID,

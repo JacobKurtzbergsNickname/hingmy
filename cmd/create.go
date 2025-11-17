@@ -1,14 +1,18 @@
 /*
 Copyright © 2025 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
 import (
-	"fmt"
+	"taedae/database"
 
+	"github.com/pterm/pterm"
 	"github.com/spf13/cobra"
 )
+
+var title string
+var description string
+var dueDate string
 
 // createCmd represents the create command
 var createCmd = &cobra.Command{
@@ -21,20 +25,27 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("create called")
+
+		accessor, err := database.NewAccessor()
+		if err != nil {
+			pterm.Error.Println("Failed to create database accessor:", err)
+			return
+		}
+
+		todo, err := accessor.CreateTodo(title, description, dueDate)
+		if err != nil {
+			pterm.Error.Println("Failed to create todo:", err)
+			return
+		}
+		pterm.Success.Printf("Todo created successfully: %s\n", todo.ToString())
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(createCmd)
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// createCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// createCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// Flags for the create command
+	createCmd.Flags().StringVarP(&title, "title", "t", "", "Title of the todo item")
+	createCmd.Flags().StringVarP(&description, "description", "d", "", "Description of the todo item")
+	createCmd.Flags().StringVarP(&dueDate, "due", "u", "", "Due date of the todo item (YYYY-MM-DD)")
 }
