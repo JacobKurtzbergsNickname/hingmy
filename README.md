@@ -1,4 +1,4 @@
-# TaeDae - Quick Todo CLI 📝
+# Hingmy - Quick Todo CLI 📝
 
 A Scottish-themed todo CLI application built with Go and Cobra, featuring a charming interface and robust database management.
 
