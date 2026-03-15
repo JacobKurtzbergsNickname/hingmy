@@ -5,7 +5,7 @@ package cmd
 
 import (
 	"fmt"
-	"taedae/database"
+	"hingmy/database"
 
 	"github.com/pterm/pterm"
 	"github.com/spf13/cobra"

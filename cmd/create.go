@@ -4,7 +4,7 @@ Copyright © 2025 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"taedae/database"
+	"hingmy/database"
 
 	"github.com/pterm/pterm"
 	"github.com/spf13/cobra"
