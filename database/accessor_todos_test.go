@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"testing"
 
-	"taedae/database/sqlc"
+	"hingmy/database/sqlc"
 
 	_ "github.com/mattn/go-sqlite3"
 )

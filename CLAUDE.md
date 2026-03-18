@@ -1,21 +1,22 @@
 # CLAUDE.md
 
-This file provides guidance for AI assistants working with the **taedae** codebase.
+This file provides guidance for AI assistants working with the **hingmy** codebase.
 
 ## Project Overview
 
-**taedae** is a Scottish-themed CLI todo manager built in Go. It uses Cobra for the CLI framework, SQLite for storage, and SQLC for type-safe SQL query generation. The application has a fun personality — Scottish accent and humor are intentional throughout the UI strings.
+**hingmy** is a Scottish-themed CLI todo manager built in Go. It uses Cobra for the CLI framework, SQLite for storage, and SQLC for type-safe SQL query generation. The application has a fun personality — Scottish accent and humor are intentional throughout the UI strings.
 
 ## Repository Structure
 
 ```
-taedae/
+hingmy/
 ├── cmd/                    # Cobra CLI command definitions
-│   ├── root.go             # Root command: welcome animation + DB init
-│   ├── create.go           # `taedae create` — create a new todo
-│   ├── read.go             # `taedae read`   — list active todos
-│   ├── update.go           # `taedae update` — update a todo (stub)
-│   └── delete.go           # `taedae delete` — delete a todo (stub)
+│   ├── root.go             # Root command: welcome animation + DB init + interactive mode
+│   ├── interactive.go      # Full interactive TUI (RunInteractiveMode)
+│   ├── create.go           # `hingmy create` — create a new todo
+│   ├── read.go             # `hingmy read`   — list active todos
+│   ├── update.go           # `hingmy update` — update a todo interactively
+│   └── delete.go           # `hingmy delete` — delete a todo interactively
 ├── database/               # Database layer
 │   ├── init.db.go          # DB file creation and connection setup
 │   ├── migration.db.go     # Manual table creation / migration logic
@@ -35,7 +36,7 @@ taedae/
 │   ├── tag_entities.sql
 │   ├── schema.sql
 │   └── drop_tables.sql
-├── go.mod                  # Go module: "taedae", requires Go 1.21+
+├── go.mod                  # Go module: "hingmy", requires Go 1.21+
 ├── go.sum
 ├── sqlc.yaml               # SQLC configuration
 └── README.md
@@ -48,7 +49,7 @@ taedae/
 go run . <command>
 
 # Build
-go build -o taedae
+go build -o hingmy
 
 # Regenerate SQLC code after changing queries/ or models/
 sqlc generate
@@ -65,7 +66,7 @@ go mod tidy
 - Terminal output uses **pterm** for styled/colored output and animations. Keep the Scottish tone consistent with existing messages.
 
 ### Database Layer
-- The database is SQLite stored at `~/.local/share/taedae/database.db` by default.
+- The database is SQLite stored at `~/.local/share/hingmy/database.db` by default.
 - Override with the `DB_PATH` environment variable (place in a `.env` file).
 - On startup (`root.go`), `CreateIfNotExists()` and `RunMigrations()` are called automatically — no manual setup required.
 - All queries are defined in `queries/*.sql` and the Go code in `database/sqlc/` is **auto-generated** by SQLC. After changing any `.sql` query file, run `sqlc generate` to regenerate.
@@ -84,7 +85,7 @@ go mod tidy
 
 ## Current State & Known Incomplete Features
 
-- `update` and `delete` CLI commands exist as stubs and are **not yet implemented**.
+- `update` and `delete` CLI commands are fully implemented via the interactive TUI (`doUpdate`/`doDelete` in `cmd/interactive.go`).
 - No test suite exists. When adding tests, use the standard Go `testing` package and place test files alongside the code they test (`*_test.go`).
 - No linting configuration is present. Standard Go formatting (`gofmt`) is expected.
 
@@ -93,7 +94,7 @@ go mod tidy
 Create a `.env` file in the project root (it is gitignored):
 
 ```env
-DB_PATH=.local/share/taedae/database.db
+DB_PATH=.local/share/hingmy/database.db
 ```
 
 ## Dependencies

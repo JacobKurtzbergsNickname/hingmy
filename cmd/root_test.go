@@ -25,24 +25,6 @@ func TestPadLine(t *testing.T) {
 	}
 }
 
-func TestJoinLines(t *testing.T) {
-	tests := []struct {
-		lines []string
-		want  string
-	}{
-		{[]string{}, ""},
-		{[]string{"one"}, "one"},
-		{[]string{"one", "two"}, "one\ntwo"},
-		{[]string{"a", "b", "c"}, "a\nb\nc"},
-	}
-	for _, tc := range tests {
-		got := joinLines(tc.lines)
-		if got != tc.want {
-			t.Errorf("joinLines(%v) = %q, want %q", tc.lines, got, tc.want)
-		}
-	}
-}
-
 func TestPadMessage_ShortMessage(t *testing.T) {
 	msg := "hello"
 	width := 20
