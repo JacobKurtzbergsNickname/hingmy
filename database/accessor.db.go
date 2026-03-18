@@ -3,7 +3,7 @@ package database
 import (
 	"database/sql"
 	"fmt"
-	"taedae/database/sqlc"
+	"hingmy/database/sqlc"
 )
 
 type Accessor struct {

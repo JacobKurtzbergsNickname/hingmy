@@ -3,7 +3,7 @@ package database
 import (
 	"context"
 	"database/sql"
-	"taedae/database/sqlc"
+	"hingmy/database/sqlc"
 	"time"
 )
 
@@ -51,4 +51,29 @@ func (a *Accessor) GetAllTodos() ([]sqlc.Todo, error) {
 		return nil, err
 	}
 	return todos, nil
+}
+
+func (a *Accessor) UpdateTodo(id int64, title string, description string, dueDate string, completed bool) error {
+	dueDateAsTime, err := time.Parse(RFC3339DateLayout, dueDate)
+	if err != nil {
+		dueDateAsTime = time.Time{}
+	}
+
+	return a.Queries.UpdateTodo(context.Background(), sqlc.UpdateTodoParams{
+		ID:    id,
+		Title: title,
+		Description: sql.NullString{
+			String: description,
+			Valid:  description != "",
+		},
+		DueDate: sql.NullTime{
+			Time:  dueDateAsTime,
+			Valid: !dueDateAsTime.IsZero(),
+		},
+		Completed: sql.NullBool{Bool: completed, Valid: true},
+	})
+}
+
+func (a *Accessor) SoftDeleteTodo(id int64) error {
+	return a.Queries.SoftDeleteTodo(context.Background(), id)
 }
