@@ -28,7 +28,7 @@ func getAccessor() (*database.Accessor, error) {
 }
 
 func RunInteractiveMode() {
-	accessor, err := database.NewAccessor()
+	accessor, err := getAccessor()
 	if err != nil {
 		pterm.Error.Println("Och nae! Couldnae connect tae the database:", err)
 		return
