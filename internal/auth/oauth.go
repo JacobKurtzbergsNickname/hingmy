@@ -17,11 +17,11 @@ import (
 // OAuthConfig holds the provider-specific URLs and client credentials needed
 // for the OAuth 2.0 Device Authorization Flow.
 type OAuthConfig struct {
-	ClientID              string
-	DeviceAuthEndpoint    string
-	TokenEndpoint         string
-	RevocationEndpoint    string
-	Scopes                []string
+	ClientID           string
+	DeviceAuthEndpoint string
+	TokenEndpoint      string
+	RevocationEndpoint string
+	Scopes             []string
 }
 
 // OAuthAuth implements AuthService using the OAuth 2.0 Device Authorization
