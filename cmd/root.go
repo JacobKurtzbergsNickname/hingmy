@@ -18,7 +18,31 @@ var rootCmd = &cobra.Command{
 	Short: "A Scottish-themed todo manager",
 	Long:  `Hingmy — yer wee Scottish todo manager. Run it bare tae get the full interactive experience.`,
 
-	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+	// PersistentPreRunE runs for every subcommand. It enforces authentication
+	// for all commands except those under `auth` itself, then initialises the DB.
+	//
+	// NOTE: resolveUI() is called here — not in init() — so that persistent flags
+	// (--no-color, --no-keyring, --debug) are fully parsed before we select the
+	// UI implementation.
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		// Auth guard: skip for `hingmy auth *` commands and the root command itself.
+		if cmd.Name() == "hingmy" || cmd.Name() == "auth" {
+			return nil
+		}
+		if cmd.Parent() != nil && cmd.Parent().Name() == "auth" {
+			return nil
+		}
+
+		store, err := resolveTokenStore(cmd)
+		if err != nil {
+			return err
+		}
+		if _, err := store.Load(); err != nil {
+			u := resolveUI(cmd)
+			u.Warning("Ye're no logged in — run `hingmy auth login` first.")
+			return err
+		}
+
 		if _, err := database.CreateIfNotExists("DB_PATH"); err != nil {
 			pterm.Error.Printf("Database setup failed: %v\n", err)
 			os.Exit(1)
@@ -27,6 +51,7 @@ var rootCmd = &cobra.Command{
 			pterm.Error.Printf("Migration failed: %v\n", err)
 			os.Exit(1)
 		}
+		return nil
 	},
 
 	Run: func(cmd *cobra.Command, args []string) {
@@ -42,7 +67,12 @@ func Execute() {
 }
 
 func init() {
-	godotenv.Load()
+	godotenv.Load() //nolint:errcheck
+
+	// Persistent flags available on every subcommand.
+	rootCmd.PersistentFlags().Bool("no-color", false, "Disable colour output (safe for CI/piped output)")
+	rootCmd.PersistentFlags().Bool("no-keyring", false, "Use file-based token store instead of OS keychain")
+	rootCmd.PersistentFlags().Bool("debug", false, "Enable verbose debug logging")
 }
 
 const boxWidth = 100
